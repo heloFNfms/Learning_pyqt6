@@ -1,41 +1,73 @@
-## 下载pyqt6 和 pyqt6-tools
+# 🚀 PyQt6 + PyQt6-tools 安装与配置指南
 
-  ### 1 .先创建一个虚拟环境 conda 或  .venv 都可以
+## 📦 下载 PyQt6 和 PyQt6-tools
 
-  ### 2 .激活环境后下载：
+### 1️⃣ 创建虚拟环境
+你可以使用 **conda** 或 **.venv** 创建环境：
 
-    pip install pyqt6 -i [https://pypi.tuna.tsinghua.edu.cn/simple](https://pypi.tuna.tsinghua.edu.cn/simple)【 -i 之后是镜像源】
-
-    pip install pyqt6 tools -i [https://pypi.tuna.tsinghua.edu.cn/simple](https://pypi.tuna.tsinghua.edu.cn/simple)【tools下载】
-
-    ```Test Text
-        from PyQt6.QtWidgets import QApplication, QLabel
-        import sys
-         
-        app = QApplication(sys.argv)
-        label = QLabel('PyQt6 安装成功！')
-        label.show()
-        sys.exit(app.exec())
 ```
+bash
+conda create -n pyqt6 python=3.10
+conda activate pyqt6
+或
+bash
+python -m venv .venv
+.\.venv\Scripts\activate  
+```
+2️⃣ 安装依赖包
+```
+bash
+复制代码
+pip install pyqt6 -i https://pypi.tuna.tsinghua.edu.cn/simple
+pip install pyqt6-tools -i https://pypi.tuna.tsinghua.edu.cn/simple
+✅ -i 之后是镜像源（这里用的是清华源，下载更快）。
+```
+3️⃣ 验证安装
+```
+from PyQt6.QtWidgets import QApplication, QLabel
+import sys
+
+app = QApplication(sys.argv)
+label = QLabel('✅ PyQt6 安装成功！')
+label.show()
+sys.exit(app.exec())
+```
+运行后，如果能弹出一个窗口并显示“✅ PyQt6 安装成功！”，说明安装成功 🎉。
 
 
-  ### 3 .Vscode 配置 qtdesigner 和 pyuic
+## 🛠️ VS Code 配置 Qt Designer 和 pyuic6
+### ❓ 什么是 Designer 和 pyuic？
+  Qt Designer 👉 就像 画图工具，帮你画出漂亮的界面。
 
-    #### 什么是**Designer和pyuic？**
+  pyuic6 👉 就像 翻译机，把 .ui 文件翻译成 Python 代码。
 
-      - **Qt Designer** 就像 **画图工具**，帮你画出漂亮的界面。
+### ⚙️ 配置步骤
+打开 VS Code，安装插件 👉 PYQT Integration
 
-      - **pyuic6** 就像 **翻译机**，把 `.ui` 翻译成 Python 代码。
+在插件设置中，找到 pyuic6.exe 和 designer.exe 的路径（它们在虚拟环境的 Scripts 文件夹下）。
 
-    #### 如何配置（Vscode中）？
+你也可以把 designer.exe 加入 环境变量，这样就能直接在终端输入：
 
-      1. 安装插件 -- PYQT Integration
+bash
+```
+designer
+```
+就能启动 Qt Designer。
 
-      2. 配置 pyuic6.exe 和 designer.exe 路径 (在环境文件夹下查找），具体在 PYQT Integration 设置中
+📸 截图示例
+![屏幕截图 2025-09-10 192039](https://github.com/user-attachments/assets/290b41aa-ccba-4f2e-b054-782a1a36f10c)
 
-      3. 可以将 designer.exe 放到环境变量中，下次直接在终端中输入designer就可以启动了
-    
-      
-      ![屏幕截图 2025-09-10 192039](https://github.com/user-attachments/assets/290b41aa-ccba-4f2e-b054-782a1a36f10c)
+###🎯 总结
+🟢 PyQt6 提供核心功能
+
+🟢 pyqt6-tools 提供 Designer 和 pyuic6
+
+🟢 VS Code 通过插件让开发更丝滑
+
+
+
+
+
+
 
 
