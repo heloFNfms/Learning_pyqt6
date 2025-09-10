@@ -55,7 +55,8 @@ designer
 就能启动 Qt Designer。
 
 📸 截图示例
-![屏幕截图 2025-09-10 192039](https://github.com/user-attachments/assets/290b41aa-ccba-4f2e-b054-782a1a36f10c)
+<img width="1915" height="1079" alt="屏幕截图 2025-09-10 191645" src="https://github.com/user-attachments/assets/3159606d-7852-46f1-a969-42c3587aee27" />
+
 
 ###🎯 总结
 🟢 PyQt6 提供核心功能
