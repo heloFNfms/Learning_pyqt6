@@ -58,7 +58,7 @@ designer
 <img width="1915" height="1079" alt="屏幕截图 2025-09-10 191645" src="https://github.com/user-attachments/assets/3159606d-7852-46f1-a969-42c3587aee27" />
 
 
-###🎯 总结
+### 🎯 总结
 🟢 PyQt6 提供核心功能
 
 🟢 pyqt6-tools 提供 Designer 和 pyuic6
