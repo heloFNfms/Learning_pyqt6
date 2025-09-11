@@ -1,27 +1,33 @@
 import sqlite3
+import os
 
-class DB:
-    def __init__(self, path=":memory:"):
-        self.conn = sqlite3.connect(path, check_same_thread=False)
-        self.conn.row_factory = sqlite3.Row
+class Database:
+    def __init__(self, db_name="db/users.db"):
+        self.conn = sqlite3.connect(db_name)
         self.cursor = self.conn.cursor()
+        self.create_table()
 
-    def close(self):
+    def create_table(self):
+        """如果表不存在，就创建"""
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT UNIQUE NOT NULL,
+                password TEXT NOT NULL
+            )
+        ''')
+        self.conn.commit()
+
+    def register_user(self, username, password):
+        """注册新用户"""
         try:
+            self.cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
             self.conn.commit()
-            self.cursor.close()
-            self.conn.close()
-        except:
-            pass
+            return True
+        except sqlite3.IntegrityError:
+            return False  # 用户名已存在
 
-    def execute(self, sql, params=()):
-        return self.cursor.execute(sql, params)
-
-    def fetchall(self, sql, params=()):
-        cur = self.cursor.execute(sql, params)
-        return [dict(row) for row in cur.fetchall()]
-
-    def fetchone(self, sql, params=()):
-        cur = self.cursor.execute(sql, params)
-        row = cur.fetchone()
-        return dict(row) if row else None
+    def check_login(self, username, password):
+        """验证登录"""
+        self.cursor.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
+        return self.cursor.fetchone() is not None
