@@ -11,7 +11,7 @@ conda create -n pyqt6 python=3.10
 conda activate pyqt6
 或
 bash
-python -m venv .venv
+uv venv
 .\.venv\Scripts\activate  
 ```
 2️⃣ 安装依赖包
@@ -21,6 +21,11 @@ bash
 pip install pyqt6 -i https://pypi.tuna.tsinghua.edu.cn/simple
 pip install pyqt6-tools -i https://pypi.tuna.tsinghua.edu.cn/simple
 ✅ -i 之后是镜像源（这里用的是清华源，下载更快）。
+
+#或者uv
+uv add pyqt6
+uv add pyqt6-tools
+#add可选（配置uv锁）
 ```
 3️⃣ 验证安装
 ```
