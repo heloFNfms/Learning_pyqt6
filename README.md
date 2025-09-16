@@ -79,6 +79,7 @@ designer
 ## 将 .ui -->  .py
 ```
 bash
+#这里注意给的是文件的路径
 pyuic6 mainwindow.ui -o mainwindow.py
 ```
 ## 封装数据库类 ，创建 database.py
