@@ -5,6 +5,8 @@ from UI_To_Py.Login_Window import Ui_Dialog as LoginUI
 from UI_To_Py.Register_Window import Ui_Dialog as RegisterUI
 from UI_To_Py.MainWindow import Ui_MainWindow as MainUI
 from UI_To_Py.AddBook import Ui_Dialog as AddBookUI
+from UI_To_Py.SearchWindow import Ui_Dialog as SearchUI
+from UI_To_Py.UpdateBookWindow import Ui_Dialog as UpdateBookUI
 from db.database import db
 
 class LoginWindow(QDialog, LoginUI):
@@ -125,6 +127,145 @@ class AddBookDialog(QDialog, AddBookUI):
             'notes': self.notesEdit.toPlainText().strip()
         }
 
+class SearchWindow(QDialog, SearchUI):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setupUi(self)
+        self.setup_connections()
+        
+    def setup_connections(self):
+        """连接信号和槽"""
+        self.searchButton.clicked.connect(self.search_books)
+        self.clearButton.clicked.connect(self.clear_results)
+        self.closeButton.clicked.connect(self.close)
+        # 支持回车键搜索
+        self.searchLineEdit.returnPressed.connect(self.search_books)
+        
+    def search_books(self):
+        """搜索图书功能"""
+        keyword = self.searchLineEdit.text().strip()
+        if not keyword:
+            QMessageBox.warning(self, "警告", "请输入搜索关键词")
+            return
+            
+        # 调用数据库搜索方法
+        books = db.search_books(keyword)
+        
+        if not books:
+            self.resultTextEdit.setText("未找到匹配的图书。")
+            return
+            
+        # 格式化搜索结果
+        result_text = f"找到 {len(books)} 本相关图书：\n\n"
+        
+        for i, book in enumerate(books, 1):
+            # book数据结构: (id, title, author, location, original_price, publication_year, publisher, quantity, purchase_date, purchase_price, notes)
+            result_text += f"【{i}】\n"
+            result_text += f"书名: {book[1]}\n"
+            result_text += f"作者: {book[2] or '未知'}\n"
+            result_text += f"存放位置: {book[3] or '未指定'}\n"
+            result_text += f"原价: ¥{book[4]}\n"
+            result_text += f"出版年份: {book[5]}\n"
+            result_text += f"出版社: {book[6] or '未知'}\n"
+            result_text += f"数量: {book[7]}\n"
+            result_text += f"购买日期: {book[8]}\n"
+            result_text += f"购买价格: ¥{book[9]}\n"
+            if book[10]:  # 备注
+                result_text += f"备注: {book[10]}\n"
+            result_text += "-" * 30 + "\n\n"
+            
+        self.resultTextEdit.setText(result_text)
+        
+    def clear_results(self):
+        """清空搜索结果"""
+        self.searchLineEdit.clear()
+        self.resultTextEdit.clear()
+
+class UpdateBookWindow(QDialog, UpdateBookUI):
+    def __init__(self, book_id, parent=None):
+        super().__init__(parent)
+        self.setupUi(self)
+        self.book_id = book_id
+        self.setup_connections()
+        self.load_book_data()
+        
+    def setup_connections(self):
+        """连接信号和槽"""
+        self.confirmButton.clicked.connect(self.confirm_update)
+        self.cancelButton.clicked.connect(self.reject)
+        
+    def load_book_data(self):
+        """加载图书数据到表单"""
+        # 从数据库获取图书信息
+        books = db.get_all_books()
+        book_data = None
+        
+        for book in books:
+            if book[0] == self.book_id:  # book[0] 是 ID
+                book_data = book
+                break
+                
+        if not book_data:
+            QMessageBox.warning(self, "错误", "未找到指定的图书")
+            self.reject()
+            return
+            
+        # 填充表单数据
+        # book数据结构: (id, title, author, location, original_price, publication_year, publisher, quantity, purchase_date, purchase_price, notes)
+        self.bookTitleEdit.setText(book_data[1] or "")
+        self.authorEdit.setText(book_data[2] or "")
+        self.locationEdit.setText(book_data[3] or "")
+        self.originalPriceSpinBox.setValue(float(book_data[4]) if book_data[4] else 0.0)
+        self.publicationYearSpinBox.setValue(int(book_data[5]) if book_data[5] else 2024)
+        self.publisherEdit.setText(book_data[6] or "")
+        self.quantitySpinBox.setValue(int(book_data[7]) if book_data[7] else 1)
+        
+        # 处理购买日期
+        if book_data[8]:
+            from PyQt6.QtCore import QDate
+            try:
+                date_parts = book_data[8].split('-')
+                if len(date_parts) == 3:
+                    year, month, day = map(int, date_parts)
+                    self.purchaseDateEdit.setDate(QDate(year, month, day))
+            except:
+                pass  # 如果日期格式有问题，使用默认值
+                
+        self.purchasePriceSpinBox.setValue(float(book_data[9]) if book_data[9] else 0.0)
+        self.notesEdit.setPlainText(book_data[10] or "")
+        
+    def confirm_update(self):
+        """确认更新图书信息"""
+        # 验证必填字段
+        if not self.bookTitleEdit.text().strip():
+            QMessageBox.warning(self, "警告", "请输入书名")
+            return
+            
+        # 获取表单数据
+        title = self.bookTitleEdit.text().strip()
+        author = self.authorEdit.text().strip() or "未知作者"
+        location = self.locationEdit.text().strip() or "未指定"
+        original_price = self.originalPriceSpinBox.value()
+        publication_year = self.publicationYearSpinBox.value()
+        publisher = self.publisherEdit.text().strip() or "未知出版社"
+        quantity = self.quantitySpinBox.value()
+        purchase_date = self.purchaseDateEdit.date().toString("yyyy-MM-dd")
+        purchase_price = self.purchasePriceSpinBox.value()
+        notes = self.notesEdit.toPlainText().strip()
+        
+        # 调用数据库更新方法
+        success, message = db.update_book(
+            self.book_id, title, author, location, original_price, 
+            publication_year, publisher, quantity, purchase_date, 
+            purchase_price, notes
+        )
+        
+        if success:
+            QMessageBox.information(self, "成功", message)
+            self.accept()  # 关闭对话框并返回成功
+        else:
+            QMessageBox.warning(self, "失败", message)
+
 class MainWindow(QMainWindow, MainUI):
     def __init__(self):
         super().__init__()
@@ -188,28 +329,9 @@ class MainWindow(QMainWindow, MainUI):
             QMessageBox.warning(self, "失败", "无法获取图书ID")
             
     def search_books(self):
-        """搜索图书"""
-        # 使用输入对话框获取搜索关键词
-        keyword, ok = QInputDialog.getText(self, "搜索", "请输入搜索关键词:")
-        if ok and keyword:
-            books = db.search_books(keyword)
-            self.bookTable.setRowCount(len(books))
-            
-            for row, book in enumerate(books):
-                # book数据结构: (id, title, author, location, original_price, publication_year, publisher, quantity, purchase_date, purchase_price, notes)
-                book_id = book[0]
-                
-                # 显示图书信息（跳过ID，从第1个元素开始）
-                display_data = book[1:]  # 跳过ID
-                for col, data in enumerate(display_data):
-                    item = QTableWidgetItem(str(data) if data is not None else "")
-                    # 将图书ID存储在第一列的用户数据中
-                    if col == 0:
-                        item.setData(Qt.ItemDataRole.UserRole, book_id)
-                    self.bookTable.setItem(row, col, item)
-        elif ok and not keyword:
-            # 如果输入为空，显示所有图书
-            self.load_books_data()
+        """打开搜索窗口"""
+        search_window = SearchWindow(self)
+        search_window.exec()
                     
     def update_book(self):
         """更新图书信息"""
@@ -223,8 +345,10 @@ class MainWindow(QMainWindow, MainUI):
         first_item = self.bookTable.item(row, 0)  # 第一列（书名列）
         if first_item:
             book_id = first_item.data(Qt.ItemDataRole.UserRole)
-            # 这里应该打开一个对话框来编辑图书信息
-            QMessageBox.information(self, "提示", f"更新功能已触发，图书ID: {book_id}")
+            # 打开更新窗口
+            update_window = UpdateBookWindow(book_id, self)
+            if update_window.exec() == QDialog.DialogCode.Accepted:
+                self.load_books_data()  # 重新加载数据
         else:
             QMessageBox.warning(self, "失败", "无法获取图书ID")
 
