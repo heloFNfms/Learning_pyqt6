@@ -10,14 +10,146 @@
     <height>600</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>600</width>
+    <height>400</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>查找书籍</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QDialog {
+    background-color: #f0f2f5;
+}
+
+QLineEdit {
+    padding: 8px 12px;
+    border: 2px solid #d9d9d9;
+    border-radius: 6px;
+    background-color: white;
+    font-size: 14px;
+    min-height: 20px;
+}
+
+QLineEdit:focus {
+    border-color: #40a9ff;
+    outline: none;
+}
+
+QLineEdit:hover {
+    border-color: #40a9ff;
+}
+
+QTextEdit {
+    padding: 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    background-color: white;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+QTextEdit:focus {
+    border-color: #40a9ff;
+    outline: none;
+}
+
+QScrollBar:vertical {
+    border: none;
+    background: #f0f0f0;
+    width: 10px;
+    border-radius: 5px;
+}
+
+QScrollBar::handle:vertical {
+    background: #d9d9d9;
+    border-radius: 5px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #bfbfbf;
+}
+
+QPushButton {
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    min-width: 80px;
+    min-height: 35px;
+}
+
+QPushButton#searchButton {
+    background-color: #1890ff;
+    color: white;
+}
+
+QPushButton#searchButton:hover {
+    background-color: #40a9ff;
+}
+
+QPushButton#searchButton:pressed {
+    background-color: #096dd9;
+}
+
+QPushButton#clearButton {
+    background-color: #ff4d4f;
+    color: white;
+}
+
+QPushButton#clearButton:hover {
+    background-color: #ff7875;
+}
+
+QPushButton#clearButton:pressed {
+    background-color: #d9363e;
+}
+
+QPushButton#closeButton {
+    background-color: #8c8c8c;
+    color: white;
+}
+
+QPushButton#closeButton:hover {
+    background-color: #a6a6a6;
+}
+
+QPushButton#closeButton:pressed {
+    background-color: #595959;
+}</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="spacing">
+    <number>20</number>
+   </property>
+   <property name="leftMargin">
+    <number>20</number>
+   </property>
+   <property name="topMargin">
+    <number>20</number>
+   </property>
+   <property name="rightMargin">
+    <number>20</number>
+   </property>
+   <property name="bottomMargin">
+    <number>20</number>
+   </property>
    <item>
     <layout class="QHBoxLayout" name="searchLayout">
+     <property name="spacing">
+      <number>10</number>
+     </property>
      <item>
       <widget class="QLineEdit" name="searchLineEdit">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
        <property name="placeholderText">
         <string>请输入书名、作者、出版社等关键词进行搜索</string>
        </property>
@@ -28,11 +160,9 @@
        <property name="text">
         <string>查找</string>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>80</width>
-         <height>30</height>
-        </size>
+       <property name="icon">
+        <iconset>
+         <normaloff>icons/search.png</normaloff>icons/search.png</iconset>
        </property>
       </widget>
      </item>
@@ -50,6 +180,9 @@
    </item>
    <item>
     <layout class="QHBoxLayout" name="buttonLayout">
+     <property name="spacing">
+      <number>10</number>
+     </property>
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
@@ -68,11 +201,9 @@
        <property name="text">
         <string>清空</string>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>80</width>
-         <height>30</height>
-        </size>
+       <property name="icon">
+        <iconset>
+         <normaloff>icons/clear.png</normaloff>icons/clear.png</iconset>
        </property>
       </widget>
      </item>
@@ -81,11 +212,9 @@
        <property name="text">
         <string>关闭</string>
        </property>
-       <property name="minimumSize">
-        <size>
-         <width>80</width>
-         <height>30</height>
-        </size>
+       <property name="icon">
+        <iconset>
+         <normaloff>icons/close.png</normaloff>icons/close.png</iconset>
        </property>
       </widget>
      </item>

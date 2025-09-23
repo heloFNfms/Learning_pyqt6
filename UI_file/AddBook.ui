@@ -10,10 +10,108 @@
     <height>600</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>500</width>
+    <height>600</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>添加图书</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QDialog {
+    background-color: #f0f2f5;
+}
+
+QLabel {
+    font-size: 14px;
+    color: #262626;
+}
+
+QLineEdit, QDoubleSpinBox, QSpinBox, QDateEdit {
+    padding: 8px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 14px;
+    min-height: 20px;
+}
+
+QLineEdit:focus, QDoubleSpinBox:focus, QSpinBox:focus, QDateEdit:focus {
+    border-color: #40a9ff;
+    outline: none;
+}
+
+QLineEdit:hover, QDoubleSpinBox:hover, QSpinBox:hover, QDateEdit:hover {
+    border-color: #40a9ff;
+}
+
+QTextEdit {
+    padding: 8px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 14px;
+}
+
+QTextEdit:focus {
+    border-color: #40a9ff;
+    outline: none;
+}
+
+QTextEdit:hover {
+    border-color: #40a9ff;
+}
+
+QScrollArea {
+    border: none;
+    background-color: transparent;
+}
+
+QScrollBar:vertical {
+    border: none;
+    background: #f0f0f0;
+    width: 10px;
+    border-radius: 5px;
+}
+
+QScrollBar::handle:vertical {
+    background: #d9d9d9;
+    border-radius: 5px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #bfbfbf;
+}
+
+QPushButton {
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    min-width: 100px;
+    min-height: 35px;
+}
+</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>15</number>
+   </property>
+   <property name="leftMargin">
+    <number>20</number>
+   </property>
+   <property name="topMargin">
+    <number>20</number>
+   </property>
+   <property name="rightMargin">
+    <number>20</number>
+   </property>
+   <property name="bottomMargin">
+    <number>20</number>
+   </property>
    <item>
     <widget class="QLabel" name="titleLabel">
      <property name="text">
@@ -23,7 +121,7 @@
       <set>Qt::AlignCenter</set>
      </property>
      <property name="styleSheet">
-      <string>font-size: 18px; font-weight: bold; margin: 10px;</string>
+      <string>font-size: 24px; font-weight: bold; color: #1890ff; margin: 10px;</string>
      </property>
     </widget>
    </item>
@@ -42,6 +140,12 @@
        </rect>
       </property>
       <layout class="QFormLayout" name="formLayout">
+       <property name="horizontalSpacing">
+        <number>15</number>
+       </property>
+       <property name="verticalSpacing">
+        <number>15</number>
+       </property>
        <item row="0" column="0">
         <widget class="QLabel" name="bookTitleLabel">
          <property name="text">
@@ -240,37 +344,43 @@
      </item>
      <item>
       <widget class="QPushButton" name="confirmButton">
-       <property name="minimumSize">
-        <size>
-         <width>100</width>
-         <height>35</height>
-        </size>
+       <property name="styleSheet">
+        <string>QPushButton {
+    background-color: #52c41a;
+    color: white;
+}
+
+QPushButton:hover {
+    background-color: #73d13d;
+}
+
+QPushButton:pressed {
+    background-color: #389e0d;
+}</string>
        </property>
        <property name="text">
         <string>确认添加</string>
-       </property>
-       <property name="styleSheet">
-        <string>QPushButton { background-color: #4CAF50; color: white; border: none; border-radius: 5px; font-weight: bold; }
-QPushButton:hover { background-color: #45a049; }
-QPushButton:pressed { background-color: #3d8b40; }</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="cancelButton">
-       <property name="minimumSize">
-        <size>
-         <width>100</width>
-         <height>35</height>
-        </size>
+       <property name="styleSheet">
+        <string>QPushButton {
+    background-color: #ff4d4f;
+    color: white;
+}
+
+QPushButton:hover {
+    background-color: #ff7875;
+}
+
+QPushButton:pressed {
+    background-color: #d9363e;
+}</string>
        </property>
        <property name="text">
         <string>取消</string>
-       </property>
-       <property name="styleSheet">
-        <string>QPushButton { background-color: #f44336; color: white; border: none; border-radius: 5px; font-weight: bold; }
-QPushButton:hover { background-color: #da190b; }
-QPushButton:pressed { background-color: #b71c1c; }</string>
        </property>
       </widget>
      </item>
