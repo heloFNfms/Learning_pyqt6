@@ -1,0 +1,15 @@
+{
+    "include": [
+        "."
+    ],
+    "extraPaths": [],
+    "pythonVersion": "3.12",
+    "typeCheckingMode": "basic",
+    "useLibraryCodeForTypes": true,
+    "autoImportCompletions": true,
+    "reportMissingImports": "warning",
+    "reportMissingTypeStubs": "none",
+    "stubPath": "",
+    "venvPath": "",
+    "venv": ""
+}

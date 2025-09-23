@@ -1,6 +1,7 @@
 import sys
 from PyQt6.QtWidgets import QApplication, QDialog, QMessageBox, QMainWindow, QTableWidgetItem, QInputDialog
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtGui import QColor
 from UI_To_Py.Login_Window import Ui_Dialog as LoginUI
 from UI_To_Py.Register_Window import Ui_Dialog as RegisterUI
 from UI_To_Py.MainWindow import Ui_MainWindow as MainUI
@@ -8,11 +9,14 @@ from UI_To_Py.AddBook import Ui_Dialog as AddBookUI
 from UI_To_Py.SearchWindow import Ui_Dialog as SearchUI
 from UI_To_Py.UpdateBookWindow import Ui_Dialog as UpdateBookUI
 from db.database import db
+from styles.animations import animation_manager
+from styles.clean_modern_styles import *
 
 class LoginWindow(QDialog, LoginUI):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.setStyleSheet(LOGIN_STYLE)  # 应用现代化样式
         self.setup_connections()
         
     def setup_connections(self):
@@ -39,14 +43,22 @@ class LoginWindow(QDialog, LoginUI):
             
     def open_register_window(self):
         self.register_window = RegisterWindow()
-        self.register_window.show()
-        self.close()
+        # 添加窗口切换动画
+        animation_manager.fade_out(self, 200)
+        QTimer.singleShot(200, lambda: (
+            self.register_window.show(),
+            animation_manager.slide_in_from_right(self.register_window, 400),
+            self.close()
+        ))
 
 class RegisterWindow(QDialog, RegisterUI):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.setStyleSheet(REGISTER_STYLE)  # 应用现代化样式
         self.setup_connections()
+        # 添加淡入动画
+        QTimer.singleShot(100, lambda: animation_manager.fade_in(self))
         
     def setup_connections(self):
         self.Register_Botton.clicked.connect(self.register)
@@ -69,14 +81,22 @@ class RegisterWindow(QDialog, RegisterUI):
             
     def return_to_login(self):
         self.login_window = LoginWindow()
-        self.login_window.show()
-        self.close()
+        # 添加窗口切换动画
+        animation_manager.fade_out(self, 200)
+        QTimer.singleShot(200, lambda: (
+            self.login_window.show(),
+            animation_manager.slide_in_from_left(self.login_window, 400),
+            self.close()
+        ))
 
 class AddBookDialog(QDialog, AddBookUI):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
+        self.setStyleSheet(ADD_BOOK_STYLE)  # 应用现代化样式
         self.setup_connections()
+        # 添加弹跳动画
+        QTimer.singleShot(100, lambda: animation_manager.bounce_in(self))
         
     def setup_connections(self):
         self.confirmButton.clicked.connect(self.confirm_add)
@@ -131,7 +151,10 @@ class SearchWindow(QDialog, SearchUI):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
+        self.setStyleSheet(SEARCH_WINDOW_STYLE)  # 应用现代化样式
         self.setup_connections()
+        # 添加淡入动画
+        QTimer.singleShot(100, lambda: animation_manager.fade_in(self))
         
     def setup_connections(self):
         """连接信号和槽"""
@@ -185,9 +208,12 @@ class UpdateBookWindow(QDialog, UpdateBookUI):
     def __init__(self, book_id, parent=None):
         super().__init__(parent)
         self.setupUi(self)
+        self.setStyleSheet(UPDATE_BOOK_STYLE)  # 应用现代化样式
         self.book_id = book_id
         self.setup_connections()
         self.load_book_data()
+        # 添加淡入动画
+        QTimer.singleShot(100, lambda: animation_manager.fade_in(self))
         
     def setup_connections(self):
         """连接信号和槽"""
@@ -270,8 +296,113 @@ class MainWindow(QMainWindow, MainUI):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.setStyleSheet(MAIN_WINDOW_STYLE)  # 应用现代化样式
+        # 强制设置按钮样式，确保可见性
+        self.set_button_styles()
         self.setup_connections()
         self.load_books_data()
+        
+    def set_button_styles(self):
+        """强制设置按钮样式，确保可见性"""
+        # 添加图书按钮 - 绿色
+        self.addButton.setStyleSheet("""
+            QPushButton {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                            stop:0 #52c41a, stop:1 #389e0d);
+                color: white;
+                border: 2px solid white;
+                border-radius: 8px;
+                padding: 12px 16px;
+                font-size: 14px;
+                font-weight: bold;
+                min-width: 140px;
+                min-height: 45px;
+            }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                            stop:0 #73d13d, stop:1 #52c41a);
+            }
+        """)
+        
+        # 查询图书按钮 - 蓝绿色
+        self.searchButton.setStyleSheet("""
+            QPushButton {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                            stop:0 #00b894, stop:1 #00a085);
+                color: white;
+                border: 2px solid white;
+                border-radius: 8px;
+                padding: 12px 16px;
+                font-size: 14px;
+                font-weight: bold;
+                min-width: 140px;
+                min-height: 45px;
+            }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                            stop:0 #00cec9, stop:1 #00b894);
+            }
+        """)
+        
+        # 删除图书按钮 - 红色
+        self.deleteButton.setStyleSheet("""
+            QPushButton {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                            stop:0 #ff6b6b, stop:1 #ee5a52);
+                color: white;
+                border: 2px solid white;
+                border-radius: 8px;
+                padding: 12px 16px;
+                font-size: 14px;
+                font-weight: bold;
+                min-width: 140px;
+                min-height: 45px;
+            }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                            stop:0 #ff7979, stop:1 #f55a5a);
+            }
+        """)
+        
+        # 更新图书按钮 - 橙色
+        self.updateButton.setStyleSheet("""
+            QPushButton {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                            stop:0 #fdcb6e, stop:1 #e17055);
+                color: white;
+                border: 2px solid white;
+                border-radius: 8px;
+                padding: 12px 16px;
+                font-size: 14px;
+                font-weight: bold;
+                min-width: 140px;
+                min-height: 45px;
+            }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                            stop:0 #ffeaa7, stop:1 #fab1a0);
+            }
+        """)
+        
+        # 退出系统按钮 - 灰色
+        self.exitButton.setStyleSheet("""
+            QPushButton {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                            stop:0 #636e72, stop:1 #2d3436);
+                color: white;
+                border: 2px solid white;
+                border-radius: 8px;
+                padding: 12px 16px;
+                font-size: 14px;
+                font-weight: bold;
+                min-width: 140px;
+                min-height: 45px;
+            }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                            stop:0 #74b9ff, stop:1 #0984e3);
+            }
+        """)
         
     def setup_connections(self):
         self.addButton.clicked.connect(self.add_book)
@@ -279,6 +410,14 @@ class MainWindow(QMainWindow, MainUI):
         self.searchButton.clicked.connect(self.search_books)
         self.updateButton.clicked.connect(self.update_book)
         self.exitButton.clicked.connect(self.close)
+        
+        # 为按钮添加悬停动画效果
+        self.setup_button_hover_effects()
+        
+    def setup_button_hover_effects(self):
+        """设置按钮悬停效果"""
+        # 简化动画，去掉有问题的浮动效果
+        pass
         
     def load_books_data(self):
         """加载所有图书数据到表格"""
@@ -309,24 +448,47 @@ class MainWindow(QMainWindow, MainUI):
             
     def delete_book(self):
         """删除选中的图书"""
-        selected_rows = self.bookTable.selectionModel().selectedRows()
+        selection_model = self.bookTable.selectionModel()
+        if selection_model is None:
+            QMessageBox.warning(self, "警告", "表格选择模型未初始化")
+            return
+            
+        selected_rows = selection_model.selectedRows()
         if not selected_rows:
             QMessageBox.warning(self, "警告", "请先选择要删除的图书")
             return
             
-        # 获取选中行的ID（从第一列的用户数据中获取）
+        # 获取选中行的书名
         row = selected_rows[0].row()
-        first_item = self.bookTable.item(row, 0)  # 第一列（书名列）
-        if first_item:
-            book_id = first_item.data(Qt.ItemDataRole.UserRole)
-            success, message = db.delete_book(book_id)
-            if success:
-                QMessageBox.information(self, "成功", message)
-                self.load_books_data()  # 重新加载数据
+        first_item = self.bookTable.item(row, 0)  # 第一列是书名
+        if first_item is None:
+            QMessageBox.warning(self, "警告", "无法获取图书信息")
+            return
+        book_title = first_item.text()
+        
+        # 显示确认对话框
+        reply = QMessageBox.question(
+            self, 
+            "确认删除", 
+            f"您确定要删除图书《{book_title}》吗？\n\n此操作无法撤销！",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No  # 默认选择"否"
+        )
+        
+        # 如果用户选择"是"，则执行删除
+        if reply == QMessageBox.StandardButton.Yes:
+            # 获取选中行的ID（从第一列的用户数据中获取）
+            first_item = self.bookTable.item(row, 0)  # 第一列（书名列）
+            if first_item:
+                book_id = first_item.data(Qt.ItemDataRole.UserRole)
+                success, message = db.delete_book(book_id)
+                if success:
+                    QMessageBox.information(self, "成功", message)
+                    self.load_books_data()  # 重新加载数据
+                else:
+                    QMessageBox.warning(self, "失败", message)
             else:
-                QMessageBox.warning(self, "失败", message)
-        else:
-            QMessageBox.warning(self, "失败", "无法获取图书ID")
+                QMessageBox.warning(self, "失败", "无法获取图书ID")
             
     def search_books(self):
         """打开搜索窗口"""
@@ -335,7 +497,12 @@ class MainWindow(QMainWindow, MainUI):
                     
     def update_book(self):
         """更新图书信息"""
-        selected_rows = self.bookTable.selectionModel().selectedRows()
+        selection_model = self.bookTable.selectionModel()
+        if selection_model is None:
+            QMessageBox.warning(self, "警告", "表格选择模型未初始化")
+            return
+            
+        selected_rows = selection_model.selectedRows()
         if not selected_rows:
             QMessageBox.warning(self, "警告", "请先选择要更新的图书")
             return
