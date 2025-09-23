@@ -7,10 +7,11 @@
 
 ```
 bash
-conda create -n pyqt6 python=3.10
-conda activate pyqt6
+conda create -n pyqt6_env python=3.10
+conda activate pyqt6_env
 或
 bash
+uv init
 uv venv
 .\.venv\Scripts\activate  
 ```
@@ -23,12 +24,13 @@ pip install pyqt6-tools -i https://pypi.tuna.tsinghua.edu.cn/simple
 ✅ -i 之后是镜像源（这里用的是清华源，下载更快）。
 
 #或者uv
-uv add pyqt6
-uv add pyqt6-tools
-#add可选（配置uv锁）
+uv pip install pyqt6
+uv pip install pyqt6-tools
+#可选add（配置uv锁）,但可能会出问题
 ```
 3️⃣ 验证安装
 ```
+bash
 from PyQt6.QtWidgets import QApplication, QLabel
 import sys
 
@@ -44,14 +46,24 @@ sys.exit(app.exec())
 ### ❓ 什么是 Designer 和 pyuic？
   Qt Designer 👉 就像 画图工具，帮你画出漂亮的界面。
 
-  pyuic6 👉 就像 翻译机，把 .ui 文件翻译成 Python 代码。
+  pyuic6 👉 就像 翻译机，把 `.ui`文件翻译成 `Python` 代码。
 
 ### ⚙️ 配置步骤
-打开 VS Code，安装插件 👉 PYQT Integration
+打开 VS Code，安装插件 👉 PYQT Integration，打开插件的设置，找到下面截图示例两个我填入路径（带有蓝色引用的位置）  
+找到`pyuic6.exe`和`designer.exe`两个文件的位置  
+如果用的是`annconda`,那么得麻烦一点，得去你的`conda`环境下查找。如果用的是`.venv`，那么就在你的项目文件夹下的环境中。
 
-在插件设置中，找到 pyuic6.exe 和 designer.exe 的路径（它们在虚拟环境的 Scripts 文件夹下）。
-
-你也可以把 designer.exe 加入 环境变量，这样就能直接在终端输入：
+`pyuic6.exe` 在虚拟环境的 `Scripts` 文件夹下。
+例如：
+   ```
+  D:\Anaconda1\envs\pyqt_env\Scripts
+  ```
+这个 `designer.exe` 的路径
+例如：
+  ```
+  Anaconda1\envs\pyqt_env\Lib\site-packages\qt6_applications\Qt\bin
+  ```
+你也可以把 `designer.exe` 加入 环境变量，这样就能直接在终端输入：
 
 bash
 ```
@@ -63,24 +75,25 @@ designer
 <img width="1915" height="1079" alt="屏幕截图 2025-09-10 191645" src="https://github.com/user-attachments/assets/3159606d-7852-46f1-a969-42c3587aee27" />
 
 
-### 🎯 总结
+### 🎯 配置总结
 🟢 PyQt6 提供核心功能
 
 🟢 pyqt6-tools 提供 Designer 和 pyuic6
 
-🟢 VS Code 通过插件让开发更丝滑
 
-# 创建一个简单的可视化界面
-## 使用 designer 可视化
-<img width="1919" height="1079" alt="屏幕截图 2025-09-11 102032" src="https://github.com/user-attachments/assets/e79a5274-1918-4e48-895e-8c743cea47f0" />
+# 创建登录注册功能界面
+## 使用 `designer` 创建登录界面和注册界面
+<img width="1919" height="1074" alt="屏幕截图 2025-09-23 183003" src="https://github.com/user-attachments/assets/463715de-5731-42bd-886b-0b8b6977dee5" />
+<img width="1907" height="1079" alt="屏幕截图 2025-09-23 183126" src="https://github.com/user-attachments/assets/ed271604-2663-4266-941d-a5af556d4479" />
 
-文件--保存--项目新建一个存放ui的文件夹
 
-## 将 .ui -->  .py
+文件--保存--项目新建一个存放`ui_files`的文件夹
+
+## 将 `.ui` -->  `.py`
+这里注意给的是文件的你存放ui文件的路径和希望保存转换好py的文件位置,最好再建一个文件夹 `ui_to_py`
 ```
 bash
-#这里注意给的是文件的路径
-pyuic6 mainwindow.ui -o mainwindow.py
+    pyuic6 mainwindow.ui -o mainwindow.py
 ```
 ## 封装数据库类 ，创建 database.py
 ```
