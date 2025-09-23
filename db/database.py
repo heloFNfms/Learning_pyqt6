@@ -1,7 +1,8 @@
 import sqlite3
 import hashlib
 import os
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
+from datetime import datetime
 
 class UserDatabase:
     def __init__(self, db_path: str = "users.db"):
@@ -31,7 +32,50 @@ class UserDatabase:
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             ''')
+            
+            # 创建图书表
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS books (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    title TEXT NOT NULL,
+                    author TEXT,
+                    location TEXT,
+                    original_price REAL,
+                    publication_year INTEGER,
+                    publisher TEXT,
+                    quantity INTEGER DEFAULT 1,
+                    purchase_date DATE,
+                    purchase_price REAL,
+                    notes TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+            
             conn.commit()
+            
+            # 检查是否有图书数据，如果没有则添加测试数据
+            cursor.execute("SELECT COUNT(*) FROM books")
+            count = cursor.fetchone()[0]
+            if count == 0:
+                self._add_test_data(conn)
+    
+    def _add_test_data(self, conn):
+        """
+        添加测试数据
+        """
+        cursor = conn.cursor()
+        test_books = [
+            ('高等数学', '同济大学数学组', '3', 36.90, 1999, '同济大学出版社', 3, '2023-9-5', 25.00, '经典数学书'),
+            ('大学英语', '外国语组', '1', 72.80, 2005, '清华大学出版社', 1, '2023-9-5', 52.00, '英语教材'),
+            ('小王子', '安托万·德·圣埃克苏佩里', '1', 23.6, 2015, '译文出版社', 1, '2020-1-2', 20.00, '经典小说'),
+            ('病隙碎笔', '史铁生', '1', 25, 2008, '人民文学出版社', 1, '2021-11-6', 20.00, '对人生的诘问、探索与解答')
+        ]
+        
+        cursor.executemany(
+            "INSERT INTO books (title, author, location, original_price, publication_year, publisher, quantity, purchase_date, purchase_price, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            test_books
+        )
+        conn.commit()
     
     def hash_password(self, password: str) -> str:
         """
@@ -149,6 +193,81 @@ class UserDatabase:
                 )
                 conn.commit()
                 return True, "密码更新成功"
+        except sqlite3.Error as e:
+            return False, f"数据库错误: {str(e)}"
+
+    # 图书管理相关方法
+    def add_book(self, title: str, author: str, location: str, original_price: float, 
+                 publication_year: int, publisher: str, quantity: int, 
+                 purchase_date: str, purchase_price: float, notes: str) -> Tuple[bool, str]:
+        """
+        添加图书
+        """
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute(
+                    "INSERT INTO books (title, author, location, original_price, publication_year, publisher, quantity, purchase_date, purchase_price, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (title, author, location, original_price, publication_year, publisher, quantity, purchase_date, purchase_price, notes)
+                )
+                conn.commit()
+                return True, "添加成功"
+        except sqlite3.Error as e:
+            return False, f"数据库错误: {str(e)}"
+    
+    def get_all_books(self) -> List[Tuple]:
+        """
+        获取所有图书
+        """
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT id, title, author, location, original_price, publication_year, publisher, quantity, purchase_date, purchase_price, notes FROM books")
+            return cursor.fetchall()
+    
+    def search_books(self, keyword: str) -> List[Tuple]:
+        """
+        搜索图书
+        """
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT id, title, author, location, original_price, publication_year, publisher, quantity, purchase_date, purchase_price, notes FROM books WHERE title LIKE ? OR author LIKE ? OR publisher LIKE ?",
+                (f"%{keyword}%", f"%{keyword}%", f"%{keyword}%")
+            )
+            return cursor.fetchall()
+    
+    def update_book(self, book_id: int, title: str, author: str, location: str, original_price: float, 
+                    publication_year: int, publisher: str, quantity: int, 
+                    purchase_date: str, purchase_price: float, notes: str) -> Tuple[bool, str]:
+        """
+        更新图书信息
+        """
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute(
+                    "UPDATE books SET title = ?, author = ?, location = ?, original_price = ?, publication_year = ?, publisher = ?, quantity = ?, purchase_date = ?, purchase_price = ?, notes = ? WHERE id = ?",
+                    (title, author, location, original_price, publication_year, publisher, quantity, purchase_date, purchase_price, notes, book_id)
+                )
+                conn.commit()
+                if cursor.rowcount == 0:
+                    return False, "未找到该图书"
+                return True, "更新成功"
+        except sqlite3.Error as e:
+            return False, f"数据库错误: {str(e)}"
+    
+    def delete_book(self, book_id: int) -> Tuple[bool, str]:
+        """
+        删除图书
+        """
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute("DELETE FROM books WHERE id = ?", (book_id,))
+                conn.commit()
+                if cursor.rowcount == 0:
+                    return False, "未找到该图书"
+                return True, "删除成功"
         except sqlite3.Error as e:
             return False, f"数据库错误: {str(e)}"
 
